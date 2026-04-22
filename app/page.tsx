@@ -171,7 +171,7 @@ export default function Home() {
                 onRestore={restoreFromHistory}
                 onClearHistory={clearHistory}
               />
-            ) : filteredTodos.length === 0 ? (
+            ) : (filteredTodos as any[]).length === 0 ? (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -183,7 +183,7 @@ export default function Home() {
             ) : (
               <motion.div layout className="space-y-3">
                 <AnimatePresence mode="popLayout">
-                  {filteredTodos.map((todo) => (
+                  {(filteredTodos as any[]).map((todo) => (
                     <TodoItem
                       key={todo.id}
                       todo={todo}
