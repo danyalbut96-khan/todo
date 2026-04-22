@@ -65,15 +65,15 @@ export function BoardView({
                 <motion.div
                   key={todo.id}
                   draggable
-                  onDragStart={(e) => {
+                  onDragStart={(e: any) => {
                     e.dataTransfer?.setData('todoId', todo.id);
                     e.dataTransfer!.effectAllowed = 'move';
                   }}
-                  onDragOver={(e) => {
+                  onDragOver={(e: any) => {
                     e.preventDefault();
                     e.dataTransfer!.dropEffect = 'move';
                   }}
-                  onDrop={(e) => {
+                  onDrop={(e: any) => {
                     e.preventDefault();
                     const draggedId = e.dataTransfer?.getData('todoId');
                     if (draggedId && draggedId !== todo.id) {
@@ -103,14 +103,14 @@ export function BoardView({
 
           {/* Drop Zone */}
           <motion.div
-            onDragOver={(e) => {
+            onDragOver={(e: any) => {
               e.preventDefault();
               e.currentTarget.classList.add('bg-white/10');
             }}
-            onDragLeave={(e) => {
+            onDragLeave={(e: any) => {
               e.currentTarget.classList.remove('bg-white/10');
             }}
-            onDrop={(e) => {
+            onDrop={(e: any) => {
               e.preventDefault();
               e.currentTarget.classList.remove('bg-white/10');
               const draggedId = e.dataTransfer?.getData('todoId');
