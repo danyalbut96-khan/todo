@@ -10,7 +10,7 @@ interface BoardViewProps {
   tags: Tag[];
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
-  onEdit: (id: string, text: string) => void;
+  onEdit: (id: string, updates: Partial<Todo>) => void;
   onUpdateStatus: (id: string, status: 'todo' | 'inprogress' | 'done') => void;
   onSelectTodo: (todo: Todo) => void;
   selectedTodoId?: string | null;

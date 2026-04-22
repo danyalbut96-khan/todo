@@ -81,31 +81,8 @@ export default function Home() {
     );
   }
 
-  const getEmptyStateMessage = () => {
-    switch (filterBy) {
-      case 'active':
-        return { emoji: '🌙', message: 'Your mind is clear. For now.' };
-      case 'completed':
-        return { emoji: '✨', message: 'Nothing finished yet. Start small.' };
-      case 'history':
-        return { emoji: '👻', message: 'No skeletons here.' };
-      default:
-        return { emoji: '📝', message: 'Add your first task to get started!' };
-    }
-  };
-
-  const emptyState = getEmptyStateMessage();
-
-  if (!isHydrated) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-[#0d0f1a] via-[#0d0f1a] to-[#1a1d2e] flex items-center justify-center">
-        <div className="text-white/60 font-mono">Loading...</div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0d0f1a] via-[#0d0f1a] to-[#1a1d2e] relative overflow-hidden">
+    <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'dark bg-gradient-to-br from-[#0d0f1a] via-[#0d0f1a] to-[#1a1d2e]' : 'bg-[#f8f9fc]'}`}>
       {/* Floating Gradient Orbs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <motion.div
@@ -135,142 +112,202 @@ export default function Home() {
         />
       </div>
 
-      {/* Main Content */}
-      <div className="relative z-10 max-w-2xl mx-auto px-4 py-12">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <h1 className="text-5xl font-bold text-white mb-2 font-bricolage">
-            Task Master
-          </h1>
-          <p className="text-indigo-400/60 font-dm-mono">
-            Focus on what matters
-          </p>
-        </motion.div>
+      {/* Header */}
+      <Header
+        theme={theme}
+        onThemeToggle={toggleTheme}
+        onSearchOpen={openSearch}
+        overdueCount={overdueCount}
+      />
 
-        {/* Main Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/8 rounded-2xl p-8 backdrop-blur-xl shadow-2xl"
-        >
-          {/* Input */}
-          <TodoInput onAdd={addTodo} />
+      {/* Main Layout */}
+      <div className="flex flex-1 relative z-10">
+        {/* Sidebar */}
+        <Sidebar
+          filterBy={filterBy}
+          onFilterChange={setFilterBy}
+          tags={tags}
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+        />
 
-          {/* Filters */}
-          <TodoFilters
-            filterBy={filterBy}
-            onFilterChange={setFilterBy}
-            onClearCompleted={clearCompleted}
-            activeTodos={stats.remaining}
-            completedTodos={stats.completed}
-            historyCount={history.length}
-          />
+        {/* Main Content */}
+        <main className="flex-1 overflow-y-auto">
+          <div className="max-w-6xl mx-auto px-4 md:px-8 py-8">
+            {/* View Selector */}
+            {filterBy === 'all' && (
+              <div className="flex gap-2 mb-6">
+                {(['list', 'board', 'calendar'] as const).map((view) => (
+                  <motion.button
+                    key={view}
+                    onClick={() => setViewType(view)}
+                    className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+                      viewType === view
+                        ? 'bg-indigo-600 text-white'
+                        : 'bg-white/5 text-white/70 hover:bg-white/10'
+                    }`}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {view === 'list' && '📋'}
+                    {view === 'board' && '📊'}
+                    {view === 'calendar' && '📅'}
+                    {' '}
+                    {view.charAt(0).toUpperCase() + view.slice(1)}
+                  </motion.button>
+                ))}
+              </div>
+            )}
 
-          {/* Sort Selector */}
-          {(filterBy === 'all' || filterBy === 'active' || filterBy === 'completed') && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="mb-6 flex gap-2 items-center"
-            >
-              <label className="text-sm text-white/60 font-dm-mono">
-                Sort by:
-              </label>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
-                className="px-3 py-1.5 bg-white/5 border border-white/10 rounded text-white/80 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              >
-                <option value="priority">Priority</option>
-                <option value="date">Date Added</option>
-                <option value="alpha">Alphabetical</option>
-              </select>
-            </motion.div>
-          )}
+            {/* Content */}
+            {filterBy === 'all' && viewType === 'list' && (
+              <>
+                <TodoInput onAdd={addTodo} />
+                <TodoFilters
+                  filterBy={filterBy}
+                  onFilterChange={setFilterBy}
+                  onClearCompleted={clearCompleted}
+                  activeTodos={stats.remaining}
+                  completedTodos={stats.completed}
+                  historyCount={history.length}
+                />
+                <ListView
+                  todos={todos.filter((t) => !t.completed)}
+                  tags={tags}
+                  onToggle={toggleComplete}
+                  onDelete={deleteTodo}
+                  onEdit={editTodo}
+                  onSelectTodo={(todo) => setSelectedTodoId(todo.id)}
+                  selectedTodoId={selectedTodoId}
+                />
+              </>
+            )}
 
-          {/* Stats */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="mb-6 p-3 bg-white/5 border border-white/10 rounded-lg"
-          >
-            <p className="text-sm text-white/60 font-dm-mono">
-              <span className="text-indigo-400 font-semibold">
-                {stats.total}
-              </span>{' '}
-              tasks · <span className="text-emerald-400 font-semibold">
-                {stats.completed}
-              </span>{' '}
-              completed ·{' '}
-              <span className="text-amber-400 font-semibold">
-                {stats.remaining}
-              </span>{' '}
-              remaining
-            </p>
-          </motion.div>
+            {filterBy === 'all' && viewType === 'board' && (
+              <BoardView
+                todos={todos}
+                tags={tags}
+                onToggle={toggleComplete}
+                onDelete={deleteTodo}
+                onEdit={editTodo}
+                onUpdateStatus={updateStatus}
+                onSelectTodo={(todo) => setSelectedTodoId(todo.id)}
+                selectedTodoId={selectedTodoId}
+              />
+            )}
 
-          {/* Todo List or History */}
-          <div className="min-h-[300px]">
-            {filterBy === 'history' ? (
+            {filterBy === 'today' && (
+              <>
+                <TodoInput onAdd={addTodo} />
+                <TodayView
+                  todos={todos.filter((t) => {
+                    if (t.completed) return false;
+                    if (t.dueDate) return isToday(new Date(t.dueDate));
+                    return false;
+                  })}
+                  tags={tags}
+                  onToggle={toggleComplete}
+                  onDelete={deleteTodo}
+                  onEdit={editTodo}
+                  onSelectTodo={(todo) => setSelectedTodoId(todo.id)}
+                  selectedTodoId={selectedTodoId}
+                />
+              </>
+            )}
+
+            {filterBy === 'all' && viewType === 'list' && (
+              <DashboardView todos={todos} history={history} />
+            )}
+
+            {filterBy === 'history' && (
               <HistoryPanel
                 history={history}
                 onRestore={restoreFromHistory}
                 onClearHistory={clearHistory}
               />
-            ) : (filteredTodos as any[]).length === 0 ? (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-center py-12"
-              >
-                <div className="text-5xl mb-3">{emptyState.emoji}</div>
-                <p className="text-white/60 font-mono">{emptyState.message}</p>
-              </motion.div>
-            ) : (
-              <motion.div layout className="space-y-3">
-                <AnimatePresence mode="popLayout">
-                  {(filteredTodos as any[]).map((todo) => (
-                    <TodoItem
-                      key={todo.id}
-                      todo={todo}
-                      onToggle={toggleComplete}
-                      onDelete={deleteTodo}
-                      onEdit={editTodo}
-                    />
-                  ))}
-                </AnimatePresence>
-              </motion.div>
             )}
           </div>
-        </motion.div>
+        </main>
 
-        {/* Footer */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="mt-12 text-center"
-        >
-          <p className="text-xs text-white/40 hover:text-white/80 transition-all duration-200">
-            Made with ❤️ by{' '}
-            <a
-              href="https://cloudexify.site"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-indigo-400 hover:text-indigo-300"
-            >
-              Cloudexify
-            </a>
-          </p>
-        </motion.div>
+        {/* Right Panel */}
+        <RightPanel
+          todo={selectedTodo || null}
+          tags={tags}
+          onClose={() => setSelectedTodoId(null)}
+          onUpdate={(updates) => {
+            if (selectedTodoId) {
+              editTodo(selectedTodoId, updates);
+            }
+          }}
+          onAddSubtask={(text) => {
+            if (selectedTodoId) {
+              addSubtask(selectedTodoId, text);
+            }
+          }}
+          onToggleSubtask={(subtaskId) => {
+            if (selectedTodoId) {
+              toggleSubtask(selectedTodoId, subtaskId);
+            }
+          }}
+          onDeleteSubtask={(subtaskId) => {
+            if (selectedTodoId) {
+              deleteSubtask(selectedTodoId, subtaskId);
+            }
+          }}
+          onAddTag={(tagId) => {
+            if (selectedTodoId) {
+              addTag(selectedTodoId, tagId);
+            }
+          }}
+          onRemoveTag={(tagId) => {
+            if (selectedTodoId) {
+              removeTag(selectedTodoId, tagId);
+            }
+          }}
+          isOpen={!!selectedTodoId}
+        />
       </div>
+
+      {/* Command Palette */}
+      <CommandPalette
+        isOpen={isSearchOpen}
+        onClose={closeSearch}
+        todos={todos}
+        onSelectTodo={(todo) => {
+          setSelectedTodoId(todo.id);
+          closeSearch();
+        }}
+      />
+
+      {/* Focus Mode */}
+      <AnimatePresence>
+        {isFocusMode && (
+          <PomodoroTimer
+            isActive={isFocusMode}
+            onClose={() => setIsFocusMode(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Footer */}
+      <motion.footer
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+        className="text-center py-4 text-xs text-white/40 hover:text-white/80 transition-all duration-200"
+      >
+        <p>
+          Made with ❤️ by{' '}
+          <a
+            href="https://cloudexify.site"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-indigo-400 hover:text-indigo-300"
+          >
+            Cloudexify
+          </a>
+        </p>
+      </motion.footer>
     </div>
   );
 }

@@ -10,7 +10,7 @@ interface TaskCardProps {
   tags: Tag[];
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
-  onEdit: (id: string, text: string) => void;
+  onEdit: (id: string, updates: Partial<Todo>) => void;
   onClick?: () => void;
   isSelected?: boolean;
 }
@@ -30,7 +30,7 @@ export function TaskCard({
 
   const handleSave = () => {
     if (editText.trim()) {
-      onEdit(todo.id, editText);
+      onEdit(todo.id, { text: editText });
       setIsEditing(false);
     }
   };
