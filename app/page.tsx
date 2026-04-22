@@ -1,32 +1,85 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTodos } from '@/lib/useTodos';
+import { useTags } from '@/lib/useTags';
+import { useTheme } from '@/lib/useTheme';
+import { useSearch } from '@/lib/useSearch';
+import { Sidebar } from '@/components/layout/Sidebar';
+import { Header } from '@/components/layout/Header';
+import { RightPanel } from '@/components/layout/RightPanel';
+import { CommandPalette } from '@/components/layout/CommandPalette';
 import { TodoInput } from '@/components/TodoInput';
-import { TodoItem } from '@/components/TodoItem';
 import { TodoFilters } from '@/components/TodoFilters';
 import { HistoryPanel } from '@/components/HistoryPanel';
+import { ListView } from '@/components/views/ListView';
+import { BoardView } from '@/components/views/BoardView';
+import { TodayView } from '@/components/views/TodayView';
+import { DashboardView } from '@/components/views/DashboardView';
+import { PomodoroTimer } from '@/components/ui/PomodoroTimer';
 import { AnimatePresence, motion } from 'framer-motion';
+import { isToday, isBefore, startOfToday } from 'date-fns';
 
 export default function Home() {
   const {
     todos,
     history,
     filteredTodos,
+    todosByStatus,
     filterBy,
     setFilterBy,
     sortBy,
     setSortBy,
+    selectedTodoId,
+    setSelectedTodoId,
     addTodo,
     editTodo,
+    updateTodoField,
+    updateStatus,
     toggleComplete,
     deleteTodo,
     restoreFromHistory,
     clearCompleted,
     clearHistory,
+    addSubtask,
+    toggleSubtask,
+    deleteSubtask,
+    addTag,
+    removeTag,
     stats,
     isHydrated,
   } = useTodos();
+
+  const { tags, addTag: createTag, deleteTag, updateTag } = useTags();
+  const { theme, toggleTheme, fontSize, setFontSize, isHydrated: themeHydrated } = useTheme();
+  const { searchQuery, setSearchQuery, results, isOpen: isSearchOpen, openSearch, closeSearch, handleKeyDown } = useSearch(todos, tags);
+
+  const [viewType, setViewType] = React.useState<'list' | 'board' | 'calendar'>('list');
+  const [isFocusMode, setIsFocusMode] = React.useState(false);
+  const [sidebarOpen, setSidebarOpen] = React.useState(true);
+
+  // Setup keyboard shortcuts
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
+
+  // Calculate overdue count
+  const overdueCount = todos.filter((t) => {
+    if (t.completed || !t.dueDate) return false;
+    return isBefore(new Date(t.dueDate), startOfToday());
+  }).length;
+
+  // Get selected todo
+  const selectedTodo = todos.find((t) => t.id === selectedTodoId);
+
+  if (!isHydrated || !themeHydrated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#0d0f1a] via-[#0d0f1a] to-[#1a1d2e] flex items-center justify-center">
+        <div className="text-white/60 font-mono">Loading...</div>
+      </div>
+    );
+  }
 
   const getEmptyStateMessage = () => {
     switch (filterBy) {
