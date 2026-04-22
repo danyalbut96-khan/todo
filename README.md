@@ -1,36 +1,116 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Todo App - Task Master
 
-## Getting Started
+A beautiful, production-ready Todo List Web App built with Next.js 14, TypeScript, and Tailwind CSS. Features glass-morphism design, smooth animations with Framer Motion, and localStorage persistence.
 
-First, run the development server:
+## 🎨 Features
+
+- ✅ **Add Tasks** with priority selector (Low 🟢 / Medium 🟡 / High 🔴)
+- ✅ **Edit Tasks** inline with Enter/Escape support
+- ✅ **Complete Tasks** with animated checkmark
+- ✅ **Delete Tasks** with slide-out animation
+- ✅ **Filter Tabs** - All / Active / Completed / History
+- ✅ **Sort Options** - Priority / Date Added / Alphabetical
+- ✅ **Stats Bar** - Task counts with animated transitions
+- ✅ **History Panel** - View and restore deleted/completed tasks
+- ✅ **Responsive Design** - Works on mobile and desktop
+- ✅ **localStorage Persistence** - Data survives refresh
+- ✅ **Smooth Animations** - Framer Motion throughout
+- ✅ **Dark Theme** - Electric indigo accents on deep navy background
+- ✅ **Glass-Morphism** - Premium UI with backdrop blur
+
+## 🛠️ Tech Stack
+
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Animations**: Framer Motion
+- **Fonts**: Bricolage Grotesque (headings) & DM Mono (body)
+- **Icons**: Unicode emoji + custom SVGs
+- **State Management**: React Hooks (useTodos)
+- **Storage**: Browser localStorage
+- **Deployment**: Vercel
+
+## 📦 Installation
 
 ```bash
+# Clone or download the project
+cd todo
+
+# Install dependencies
+npm install
+
+# Start development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# Open browser
+# Navigate to http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Deployment to Vercel
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The app is production-ready and can be deployed to Vercel with zero configuration:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# Install Vercel CLI
+npm i -g vercel
 
-## Learn More
+# Deploy
+vercel
 
-To learn more about Next.js, take a look at the following resources:
+# Or push to GitHub and connect to Vercel dashboard
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Vercel deployment**: The app automatically builds and deploys. Just push to your git repository and connect to Vercel.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🎯 Usage
 
-## Deploy on Vercel
+1. **Add Task**: Type in the input field, select priority, press Enter or click "Add"
+2. **Edit Task**: Hover over a task and click the pencil icon, then Enter to save
+3. **Complete Task**: Click the checkbox to mark as done
+4. **Delete Task**: Click the trash icon to remove (goes to history)
+5. **Filter**: Use tabs to view All / Active / Completed / History
+6. **Sort**: Select sort order from dropdown
+7. **Restore**: Click "Restore" on deleted items in History panel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📱 Browser Support
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Chrome/Edge (latest)
+- Firefox (latest)
+- Safari (latest)
+- Mobile browsers (iOS Safari, Chrome)
+
+## 🎨 Design Details
+
+- **Color Scheme**: Deep navy (#0d0f1a) with electric indigo (#6366f1) accents
+- **Typography**: Premium font pairing for focus and readability
+- **Animations**: Smooth micro-interactions on all UI elements
+- **Glassmorphism**: Subtle backdrop blur with semi-transparent backgrounds
+- **Floating Orbs**: Animated gradient backgrounds for visual interest
+
+## 📄 Data Persistence
+
+All data is stored in browser localStorage:
+- `cloudaik_todos` - Active tasks
+- `cloudaik_history` - Deleted/completed tasks
+
+Data persists across browser sessions and refreshes.
+
+## 📝 Notes
+
+- No backend or database required
+- No environment variables needed
+- Fully hydration-safe
+- Mobile-responsive
+- Zero external APIs
+
+## 🔗 Links
+
+Made with ❤️ by [Cloudexify](https://cloudexify.site)
+
+## 📄 License
+
+This project is open source and available for personal use.
+
+---
+
+**Built with Next.js 14 • TypeScript • Tailwind CSS • Framer Motion**
