@@ -82,7 +82,7 @@ export default function Home() {
   }
 
   return (
-    <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'dark bg-gradient-to-br from-[#0d0f1a] via-[#0d0f1a] to-[#1a1d2e]' : 'bg-[#f8f9fc]'}`}>
+    <div className="min-h-screen flex flex-col transition-colors duration-300">
       {/* Floating Gradient Orbs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <motion.div
